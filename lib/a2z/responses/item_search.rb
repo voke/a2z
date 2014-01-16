@@ -2,24 +2,24 @@ module A2z
   module Responses
     class ItemSearch
       include Helpers
-      
+
       attr_accessor :operation_request, :items, :total_results, :total_pages, :more_search_results_url
-      
+
       def initialize
         @items = []
         @total_results = 0
         @total_pages = 0
         @valid = true
       end
-      
+
       def valid=(value)
         @valid = !!value
       end
-      
+
       def valid?
         @valid
       end
-      
+
       # TODO capture data['Items']['Request']['Errors'] into an attr_accessor value
       # TODO consider capturing data['Items']['Request'] into an attr_accessor value
       def self.from_response(data)
@@ -33,9 +33,9 @@ module A2z
           item_search.freeze
         end
       end
-      
+
       private
-      
+
       def self.items_from_response(data)
         items = array_wrap(data['Items']['Item']) rescue []
         items.collect { |item| Item.from_response(item) }

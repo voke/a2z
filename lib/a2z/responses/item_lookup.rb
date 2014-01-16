@@ -1,6 +1,8 @@
 module A2z
   module Responses
     class ItemLookup
+      include Helpers
+
       attr_accessor :operation_request, :items
 
       def initialize
@@ -24,11 +26,17 @@ module A2z
       def self.from_response(data)
         new.tap do |item_lookup|
           item_lookup.operation_request = OperationRequest.from_response(data['OperationRequest']) if data['OperationRequest']
-          item_lookup.items             = [data['Items']['Item']].flatten.map { |x| Item.from_response(x) } if data['Items'] && data['Items']['Item']
+          item_lookup.items             = items_from_response(data)
           item_lookup.valid             = data['Items']['Request']['IsValid'] == 'True' rescue false
           item_lookup.freeze
         end
       end
+
+      def self.items_from_response(data)
+        items = array_wrap(data['Items']['Item']) rescue []
+        items.collect { |item| Item.from_response(item) }
+      end
+
     end
   end
 end
